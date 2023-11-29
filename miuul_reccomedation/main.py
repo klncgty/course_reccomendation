@@ -131,7 +131,7 @@ def get_tags_from_gpt(query):
     
     tags_gpt = response["choices"][0]["text"].split(",")
     
-    return list(filter(None, tags_gpt))  # Remove empty tags
+    return list(filter(None, tags_gpt))  # boşş tagları sil
   
 def recommend(tags_gpt):
   recommendations = []
