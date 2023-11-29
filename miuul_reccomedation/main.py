@@ -116,7 +116,7 @@ class RecommendationSystem:
             model="text-davinci-003",
             prompt=f"sen bir veri bilimci danışmansın  {query} hakkında soru sorulduğunda bu soru ile alakalı yani bu sorunun cevabını bulabileceği 20 adet tag söyle",
             api_key=self.openai_api_key,
-            temperature=0,
+            temperature=0,  
             max_tokens=100,
             top_p=1,
             frequency_penalty=0,
