@@ -6,7 +6,7 @@ kurslar=[{
          {
              "isim":"Laravel SaaS Uygulaması Geliştirme",
              "açıklama":"Günlük yaşantımızda oldukça fazla online hizmet kullanıyor ve bunlara sürekli ödeme yapıyoruz. Kullandığımız bu platformların arka planındaki adımları hiç merak ettiniz mi? Bu eğitimde bir web geliştirici olarak bu adımları ele alacağız. Tasarımından yazılımına kadar sıfırdan bir SaaS (Hizmet için Yazılım) projesi geliştiriyor olacağız. ",
-             "tags":["Laravel","SaaS","PHP","Frontend","Backend","Tailwind","Web Development"]
+             "tags":["Laravel","SaaS","PHP","Frontend","Backend","Tailwind","Web Development","web geliştirme"]
          },
          {
              "isim":"Beautiful Soup ve Selenium ile Web Scrapping",
@@ -72,7 +72,7 @@ kurslar=[{
          {
              "isim":"Makine Öğrenmesi",
              "açıklama":"Veri bilimi Python programlama dilini kullanarak ve CRISP-DM süreçlerini dikkate alarak denetimli ve denetimsiz makine öğrenmesi (machine learning) yöntemlerini öğrenmemizi sağlar. Bu eğitimde geleneksel algoritmalar ve son zamanlarda öne çıkan birçok algoritmayı (XGBoost, LightGBM, CatBoost) kıyaslayarak ve model seçme özellikleri ile işleyerek önemli bir yetkinlik edineceksiniz.",
-             "tags":["CART","KNN","LightGBM","XGBoost","CatBoost","Hiperparametre optimizasyonu","Supervised learning","unsupervised learning","gradient descent","Machine learning","makine öğrenmesi"]
+             "tags":["yapay zeka","CART","KNN","LightGBM","XGBoost","CatBoost","Hiperparametre optimizasyonu","Supervised learning","unsupervised learning","gradient descent","Machine learning","makine öğrenmesi"]
          },
          {
              "isim":"Doğal Dil  işlemeye Giriş",
@@ -100,51 +100,54 @@ kurslar=[{
 
 
 import openai
-import os
-#from openai import OpenAI
 
+class RecommendationSystem:
 
-"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" 
-
-openai.api_key = "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" 
-
-#client = OpenAI(api_key=api_key)
-
-
-           
-def get_user_input():
-  print("Ne öğrenmek istiyorsunuz?")
-  return input()
-  
-def get_tags_from_gpt(query):
-    response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=f"{query} hakkında etiketler bul",
-        temperature=0,
-        max_tokens=100,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0
-    )
-  
-    print(response)  
+    def __init__(self):
+        self.openai_api_key = "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"
+        self.kurslar = kurslar
     
-    tags_gpt = response["choices"][0]["text"].split(",")
-    
-    return list(filter(None, tags_gpt))  # boşş tagları sil
-  
-def recommend(tags_gpt):
-  recommendations = []
-  for kurs in kurslar:
-      for tag in kurs["tags"]:
-          for gpt_tag in tags_gpt:
-             if gpt_tag.lower() in tag.lower():
+    def get_user_input(self):
+        print("Ne öğrenmek istiyorsunuz?")
+        return input()
+
+    def get_tags_from_gpt(self, query):
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=f"sen bir veri bilimci danışmansın  {query} hakkında soru sorulduğunda bu soru ile alakalı yani bu sorunun cevabını bulabileceği 20 adet tag söyle",
+            api_key=self.openai_api_key,
+            temperature=0,
+            max_tokens=100,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
+        )
+
+        tags_gpt = response["choices"][0]["text"].split(",")
+        return tags_gpt
+
+    def recommend(self, tags_gpt):
+        recommendations = []
+
+        for kurs in self.kurslar:
+            for tag in kurs["tags"]:
+                if tag in tags_gpt:
+                    recommendations.append(kurs["isim"])
+
+        for word in kurs["açıklama"].split():
+            if any(word in gpt_tag for gpt_tag in tags_gpt):
                 recommendations.append(kurs["isim"])
-        
-  print("Önerilen kurslar: ")      
-  for kurs in recommendations:
-    print(kurs)
-      
-input = get_user_input()  
-tags = get_tags_from_gpt(input)
-recommend(tags)
+
+        print("Önerilen kurslar: ", recommendations)
+
+    def run(self):
+        user_input = self.get_user_input()
+        tags = self.get_tags_from_gpt(user_input)
+        self.recommend(tags)
+
+def main():
+    system = RecommendationSystem()
+    system.run()
+
+if __name__ == '__main__':
+    main()
