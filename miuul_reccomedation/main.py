@@ -104,7 +104,7 @@ import openai
 class RecommendationSystem:
 
     def __init__(self):
-        self.openai_api_key = "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"
+        self.openai_api_key = api_key
         self.kurslar = kurslar
     
     def get_user_input(self):
